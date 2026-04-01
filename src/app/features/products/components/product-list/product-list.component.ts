@@ -149,8 +149,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
       : 'Explora productos y servicios en un modo de consulta pensado para usuarios del sistema.';
   }
 
-  get sectionSwitcherTemplateColumns(): string {
-    return `repeat(${this.isAdmin ? 5 : 2}, minmax(0, 1fr))`;
+  get sectionSwitcherColumnCount(): number {
+    return this.isAdmin ? 5 : 2;
   }
 
   get totalProducts(): number {

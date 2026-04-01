@@ -115,8 +115,9 @@
 }
 
 .section-switcher {
-  display: inline-grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(var(--section-count, 5), minmax(0, 1fr));
   gap: 0.6rem;
   margin-bottom: 1rem;
   padding: 0.45rem;
@@ -127,9 +128,16 @@
 }
 
 .section-switcher__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.35rem;
   padding: 0.9rem 1.2rem;
   background: transparent;
   color: var(--accent-strong);
+  line-height: 1.15;
+  text-align: center;
+  white-space: normal;
 }
 
 .section-switcher__button--active {
@@ -1564,6 +1572,9 @@
 
   .section-switcher {
     width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    border-radius: 1.6rem;
+    padding: 0.6rem;
   }
 
   .overview-card__header,
@@ -1774,5 +1785,11 @@
   .cash-report-item,
   .inventory-filter-field {
     padding: 0.9rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .section-switcher {
+    grid-template-columns: 1fr;
   }
 }
