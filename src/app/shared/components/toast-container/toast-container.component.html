@@ -1,0 +1,19 @@
+<section class="toast-stack" aria-live="polite" aria-atomic="true">
+  <article
+    class="toast"
+    *ngFor="let toast of toasts$ | async; trackBy: trackByToast"
+    [class.toast--success]="toast.type === 'success'"
+    [class.toast--error]="toast.type === 'error'"
+    [class.toast--info]="toast.type === 'info'"
+    [class.toast--warning]="toast.type === 'warning'"
+  >
+    <div class="toast__content">
+      <strong>{{ toast.title }}</strong>
+      <p>{{ toast.message }}</p>
+    </div>
+
+    <button type="button" class="toast__close" (click)="dismiss(toast.id)" aria-label="Cerrar notificacion">
+      ×
+    </button>
+  </article>
+</section>

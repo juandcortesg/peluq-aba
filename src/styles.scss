@@ -1,0 +1,104 @@
+:root {
+  --bg: #f6efe8;
+  --bg-soft: #fff9f4;
+  --surface: rgba(255, 249, 243, 0.78);
+  --surface-card: rgba(255, 255, 255, 0.76);
+  --surface-card-muted: rgba(255, 255, 255, 0.72);
+  --surface-card-strong: rgba(255, 255, 255, 0.82);
+  --text: #241b18;
+  --muted: #6e625b;
+  --line: rgba(78, 58, 47, 0.12);
+  --line-strong: rgba(68, 48, 39, 0.08);
+  --accent: #cb7b5a;
+  --accent-strong: #8d3d24;
+  --accent-soft: rgba(203, 123, 90, 0.16);
+  --accent-secondary: #7a478d;
+  --accent-secondary-soft: rgba(168, 114, 215, 0.12);
+  --danger: #a53f32;
+  --danger-soft: rgba(208, 92, 68, 0.12);
+  --danger-line: rgba(208, 92, 68, 0.18);
+  --success: #4d8f58;
+  --overlay-button: rgba(26, 17, 15, 0.78);
+  --shadow-soft: 0 24px 70px rgba(90, 60, 45, 0.12);
+  --font-body: 'Manrope', 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+}
+
+:root[data-theme='dark'] {
+  --bg: #11141b;
+  --bg-soft: #171b23;
+  --surface: rgba(23, 27, 35, 0.82);
+  --surface-card: rgba(27, 32, 42, 0.88);
+  --surface-card-muted: rgba(31, 37, 48, 0.82);
+  --surface-card-strong: rgba(37, 43, 56, 0.94);
+  --text: #f5ede7;
+  --muted: #b8ada5;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.08);
+  --accent: #db8a68;
+  --accent-strong: #f2b79c;
+  --accent-soft: rgba(219, 138, 104, 0.18);
+  --accent-secondary: #ca9ce0;
+  --accent-secondary-soft: rgba(202, 156, 224, 0.16);
+  --danger: #ff9788;
+  --danger-soft: rgba(255, 120, 102, 0.14);
+  --danger-line: rgba(255, 120, 102, 0.2);
+  --success: #8dd09a;
+  --overlay-button: rgba(255, 255, 255, 0.14);
+  --shadow-soft: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: var(--font-body);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.75), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(224, 182, 160, 0.28), transparent 24%),
+    linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
+  transition: background 220ms ease, color 220ms ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+  opacity: 0.5;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.03em;
+}

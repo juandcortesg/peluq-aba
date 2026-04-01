@@ -1,0 +1,329 @@
+:host {
+  display: block;
+}
+
+.inventory-form-card {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: 2rem;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-soft);
+}
+
+.inventory-form-card__heading h2,
+.inventory-section__header h3,
+.inventory-preview-card h3 {
+  margin: 0.35rem 0 0.75rem;
+  font-family: var(--font-display);
+  line-height: 1.05;
+}
+
+.inventory-form-card__heading h2 {
+  font-size: clamp(2rem, 3vw, 2.6rem);
+}
+
+.inventory-form-card__heading p,
+.inventory-preview-card p,
+.field__meta {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.eyebrow,
+.inventory-section__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  background: rgba(87, 150, 96, 0.12);
+  color: var(--success);
+}
+
+.inventory-preview-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: 1.6rem;
+  background: var(--surface-card);
+  border: 1px solid var(--line-strong);
+}
+
+.inventory-preview-card__top,
+.inventory-preview-card__footer,
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.field-grid--movement {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.field-grid--inventory-stock {
+  grid-template-columns: minmax(0, 1.1fr) repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.inventory-pill {
+  display: inline-flex;
+  justify-content: center;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(87, 150, 96, 0.14);
+  color: var(--success);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.inventory-pill--muted,
+.inventory-section__eyebrow--movement {
+  background: rgba(86, 117, 184, 0.12);
+  color: #5675b8;
+}
+
+.inventory-preview-card h3 {
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+}
+
+.inventory-preview-card__footer strong {
+  justify-self: end;
+  font-size: 2rem;
+  color: var(--accent-strong);
+}
+
+.inventory-form-sections {
+  display: grid;
+  gap: 1rem;
+}
+
+.inventory-section {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: 1.5rem;
+  background: var(--surface-card);
+  border: 1px solid var(--line-strong);
+}
+
+.inventory-section__header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.inventory-section__header h3 {
+  margin: 0;
+  font-size: clamp(1.45rem, 2vw, 1.8rem);
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field > span {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.15rem;
+  background: var(--surface-card-strong);
+  color: var(--text);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: rgba(87, 150, 96, 0.35);
+  box-shadow: 0 0 0 4px rgba(87, 150, 96, 0.12);
+  transform: translateY(-1px);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.field select {
+  padding-right: 2.75rem;
+}
+
+.field input[type='date'] {
+  min-height: 56px;
+}
+
+.field__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1rem 1.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #68b577, #3f8f4d);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 18px 32px rgba(63, 143, 77, 0.18);
+}
+
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-card-strong);
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primary-button--movement {
+  background: linear-gradient(135deg, #5675b8, #334c85);
+  box-shadow: 0 18px 32px rgba(51, 76, 133, 0.18);
+}
+
+.primary-button:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button-loader {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.85s linear infinite;
+}
+
+.submit-feedback {
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.95rem;
+}
+
+.submit-feedback--error {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-line);
+}
+
+small {
+  font-size: 0.82rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 980px) {
+  .field-grid--inventory-stock {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-grid--inventory-stock .field:first-child,
+  .field-grid--inventory-stock .field:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .inventory-form-card {
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 1.4rem;
+  }
+
+  .inventory-preview-card,
+  .inventory-section {
+    padding: 1rem;
+    border-radius: 1.2rem;
+  }
+
+  .field-grid,
+  .field-grid--inventory-stock,
+  .field-grid--movement,
+  .inventory-preview-card__top,
+  .inventory-preview-card__footer {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-preview-card__footer strong {
+    justify-self: start;
+    font-size: 1.55rem;
+  }
+
+  .primary-button {
+    width: 100%;
+  }
+
+  .secondary-button {
+    width: 100%;
+  }
+
+  .form-actions {
+    display: grid;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-form-card {
+    padding: 0.9rem;
+    border-radius: 1.2rem;
+  }
+
+  .inventory-form-card__heading h2 {
+    font-size: 1.5rem;
+  }
+}

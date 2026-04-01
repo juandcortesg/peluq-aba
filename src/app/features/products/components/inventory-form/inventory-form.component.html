@@ -1,0 +1,183 @@
+<section class="inventory-form-card">
+  <div class="inventory-form-card__heading">
+    <span class="eyebrow">Inventario</span>
+    <h2>Items, insumos y movimientos</h2>
+    <p>
+      Registra productos o insumos, define stock minimo y lleva la trazabilidad de cada entrada o salida.
+    </p>
+  </div>
+
+  <div class="inventory-preview-card">
+    <div class="inventory-preview-card__top">
+      <span class="inventory-pill">Stock minimo {{ itemControls['minStock'].value || 0 }}</span>
+      <span class="inventory-pill inventory-pill--muted">{{ itemControls['category'].value || 'Categoria' }}</span>
+    </div>
+
+    <h3>{{ itemControls['name'].value || 'Mascarilla reparadora' }}</h3>
+    <p>{{ itemControls['notes'].value || 'Item listo para control de inventario y reposicion.' }}</p>
+
+    <div class="inventory-preview-card__footer">
+      <span>{{ itemControls['unit'].value || 'unidades' }}</span>
+      <strong>{{ formatQuantity(itemControls['currentStock'].value || 0) }}</strong>
+    </div>
+  </div>
+
+  <div class="inventory-form-sections">
+    <section class="inventory-section">
+      <div class="inventory-section__header">
+        <span class="inventory-section__eyebrow">{{ itemHeadingLabel }}</span>
+        <h3>{{ itemHeadingTitle }}</h3>
+      </div>
+
+      <form [formGroup]="itemForm" (ngSubmit)="onSubmitItem()" novalidate>
+        <div class="field-grid">
+          <label class="field">
+            <span>Nombre *</span>
+            <input formControlName="name" type="text" placeholder="Shampoo neutro, cera, guantes..." />
+          </label>
+
+          <label class="field">
+            <span>Categoria *</span>
+            <input formControlName="category" type="text" placeholder="Insumos, coloracion, cuidado..." />
+          </label>
+        </div>
+
+        <div class="field-grid field-grid--inventory-stock">
+          <label class="field">
+            <span>Unidad *</span>
+            <input formControlName="unit" type="text" placeholder="unidades, ml, gramos..." />
+          </label>
+
+          <label class="field">
+            <span>Stock inicial *</span>
+            <input formControlName="currentStock" type="number" min="0" step="0.01" />
+          </label>
+
+          <label class="field">
+            <span>Stock minimo *</span>
+            <input formControlName="minStock" type="number" min="0" step="0.01" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Notas</span>
+          <textarea
+            formControlName="notes"
+            rows="3"
+            placeholder="Detalle opcional para uso interno, presentacion o frecuencia de reposicion."
+          ></textarea>
+          <div class="field__meta">
+            <small>Punto de partida del control</small>
+            <small>{{ itemNotesLength }}/280</small>
+          </div>
+        </label>
+
+        <div *ngIf="itemSubmitError" class="submit-feedback submit-feedback--error">
+          {{ itemSubmitError }}
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button" [disabled]="itemForm.invalid || isSavingItem">
+            <span class="button-loader" *ngIf="isSavingItem"></span>
+            {{
+              isSavingItem
+                ? (isEditingItem ? 'Actualizando item...' : 'Guardando item...')
+                : (isEditingItem ? 'Actualizar item' : 'Guardar item')
+            }}
+          </button>
+
+          <button *ngIf="isEditingItem" type="button" class="secondary-button" (click)="cancelItemEdit()">
+            Cancelar edicion
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="inventory-section">
+      <div class="inventory-section__header">
+        <span class="inventory-section__eyebrow inventory-section__eyebrow--movement">{{ movementHeadingLabel }}</span>
+        <h3>{{ movementHeadingTitle }}</h3>
+      </div>
+
+      <form [formGroup]="movementForm" (ngSubmit)="onSubmitMovement()" novalidate>
+        <div class="field-grid">
+          <label class="field field--full">
+            <span>Item *</span>
+            <select formControlName="inventoryItemId">
+              <option value="" disabled>Selecciona un item</option>
+              <option *ngFor="let item of inventoryItems" [value]="item.id">
+                {{ item.name }} - {{ formatQuantity(item.current_stock) }} {{ item.unit }}
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <div class="field-grid field-grid--movement">
+          <label class="field">
+            <span>Tipo *</span>
+            <select formControlName="movementType">
+              <option value="entry">Entrada</option>
+              <option value="exit">Salida</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Cantidad *</span>
+            <input formControlName="quantity" type="number" min="0.01" step="0.01" />
+          </label>
+
+          <label class="field field--full">
+            <span>Fecha *</span>
+            <input formControlName="movementDate" type="date" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Motivo *</span>
+          <input formControlName="reason" type="text" placeholder="Compra, uso en servicio, venta, ajuste..." />
+        </label>
+
+        <label class="field">
+          <span>Referencia</span>
+          <input formControlName="referenceLabel" type="text" placeholder="Factura, servicio, venta o nota interna." />
+        </label>
+
+        <label class="field">
+          <span>Notas</span>
+          <textarea
+            formControlName="notes"
+            rows="3"
+            placeholder="Observacion opcional para reforzar la trazabilidad del movimiento."
+          ></textarea>
+          <div class="field__meta">
+            <small>{{ projectedStockLabel }}</small>
+            <small>{{ movementNotesLength }}/280</small>
+          </div>
+        </label>
+
+        <div *ngIf="movementSubmitError" class="submit-feedback submit-feedback--error">
+          {{ movementSubmitError }}
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="primary-button primary-button--movement"
+            [disabled]="movementForm.invalid || isSavingMovement || !inventoryItems.length"
+          >
+            <span class="button-loader" *ngIf="isSavingMovement"></span>
+            {{
+              isSavingMovement
+                ? (isEditingMovement ? 'Actualizando movimiento...' : 'Guardando movimiento...')
+                : (isEditingMovement ? 'Actualizar movimiento' : 'Guardar movimiento')
+            }}
+          </button>
+
+          <button *ngIf="isEditingMovement" type="button" class="secondary-button" (click)="cancelMovementEdit()">
+            Cancelar edicion
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</section>

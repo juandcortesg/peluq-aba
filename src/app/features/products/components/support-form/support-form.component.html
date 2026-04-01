@@ -1,0 +1,121 @@
+<section class="support-form-card">
+  <div class="support-form-card__heading">
+    <span class="eyebrow">Soporte y ayuda</span>
+    <h2>Asistente virtual y registro de casos</h2>
+    <p>
+      Consulta dudas en lenguaje natural, recibe orientacion inmediata y crea tickets para dejar cada situacion con trazabilidad.
+    </p>
+  </div>
+
+  <div class="support-preview-card">
+    <div class="support-preview-card__top">
+      <span class="support-pill">Asistente activo</span>
+      <span class="support-pill support-pill--muted">{{ currentModuleLabel }}</span>
+    </div>
+
+    <h3>{{ assistantReply.title }}</h3>
+    <p>{{ assistantReply.answer }}</p>
+  </div>
+
+  <div class="support-sections">
+    <section class="support-section">
+      <div class="support-section__header">
+        <span class="support-section__eyebrow">Asistente</span>
+        <h3>Consulta en tiempo real</h3>
+      </div>
+
+      <form [formGroup]="assistantForm" (ngSubmit)="askAssistant()" novalidate>
+        <label class="field">
+          <span>Tu pregunta *</span>
+          <textarea
+            formControlName="question"
+            rows="4"
+            placeholder="Como registro una salida de inventario o que hago si no me guarda un producto..."
+          ></textarea>
+        </label>
+
+        <div class="support-reply">
+          <strong>{{ assistantReply.title }}</strong>
+          <p>{{ assistantReply.answer }}</p>
+
+          <div class="support-reply__suggestions">
+            <span *ngFor="let suggestion of assistantReply.suggestions">{{ suggestion }}</span>
+          </div>
+        </div>
+
+        <button type="submit" class="primary-button" [disabled]="assistantForm.invalid">
+          Consultar asistente
+        </button>
+      </form>
+    </section>
+
+    <section class="support-section">
+      <div class="support-section__header">
+        <span class="support-section__eyebrow support-section__eyebrow--ticket">Ticket</span>
+        <h3>{{ isEditingTicket ? 'Actualizar caso de soporte' : 'Registrar caso de soporte' }}</h3>
+      </div>
+
+      <form [formGroup]="ticketForm" (ngSubmit)="onSubmitTicket()" novalidate>
+        <div class="field-grid field-grid--compact">
+          <label class="field">
+            <span>Modulo *</span>
+            <select formControlName="module">
+              <option value="general">General</option>
+              <option value="products">Productos</option>
+              <option value="services">Servicios</option>
+              <option value="cash">Caja</option>
+              <option value="inventory">Inventario</option>
+              <option value="support">Soporte</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Prioridad *</span>
+            <select formControlName="priority">
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Titulo *</span>
+          <input formControlName="title" type="text" placeholder="Error al guardar una salida de inventario" />
+        </label>
+
+        <label class="field">
+          <span>Descripcion *</span>
+          <textarea
+            formControlName="description"
+            rows="4"
+            placeholder="Explica que paso, en que modulo ocurrio y que intentaste antes de registrar el caso."
+          ></textarea>
+          <div class="field__meta">
+            <small>Describe el problema con detalle para dar seguimiento</small>
+            <small>{{ descriptionLength }}/480</small>
+          </div>
+        </label>
+
+        <div *ngIf="ticketSubmitError" class="submit-feedback submit-feedback--error">
+          {{ ticketSubmitError }}
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button primary-button--ticket" [disabled]="ticketForm.invalid || isCreatingTicket">
+            <span class="button-loader" *ngIf="isCreatingTicket"></span>
+            {{
+              isCreatingTicket
+                ? (isEditingTicket ? 'Actualizando caso...' : 'Registrando caso...')
+                : (isEditingTicket ? 'Actualizar ticket' : 'Crear ticket')
+            }}
+          </button>
+
+          <button *ngIf="isEditingTicket" type="button" class="secondary-button" (click)="cancelTicketEdit()">
+            Cancelar edicion
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</section>

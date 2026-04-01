@@ -1,0 +1,99 @@
+<section class="product-form-card">
+  <div class="product-form-card__heading">
+    <span class="eyebrow">{{ headingLabel }}</span>
+    <h2>{{ headingTitle }}</h2>
+    <p>{{ headingDescription }}</p>
+  </div>
+
+  <div class="product-form-card__preview">
+    <img [src]="previewImage" alt="Vista previa del producto" />
+    <div>
+      <span class="preview-label">Vista previa</span>
+      <strong>{{ controls['name'].value || 'Nuevo producto' }}</strong>
+      <small>
+        {{
+          controls['price'].value
+            ? (controls['price'].value | currency:'COP':'symbol-narrow':'1.0-0':'es-CO')
+            : 'Precio pendiente'
+        }}
+      </small>
+    </div>
+  </div>
+
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="field-grid">
+      <label class="field">
+        <span>Nombre del producto *</span>
+        <input formControlName="name" type="text" placeholder="Ej. Shampoo reparador premium" />
+        <small *ngIf="hasControlError('name', 'required')" class="error-text">El nombre es obligatorio.</small>
+        <small *ngIf="hasControlError('name', 'minlength')" class="error-text">Usa al menos 3 caracteres.</small>
+        <small *ngIf="hasControlError('name', 'maxlength')" class="error-text">Usa maximo 80 caracteres.</small>
+      </label>
+
+      <label class="field">
+        <span>Precio *</span>
+        <div class="currency-input">
+          <span>$</span>
+          <input formControlName="price" type="number" min="0" step="100" placeholder="45000" />
+        </div>
+        <small *ngIf="hasControlError('price', 'required')" class="error-text">El precio es obligatorio.</small>
+        <small *ngIf="hasControlError('price', 'min')" class="error-text">El precio no puede ser negativo.</small>
+      </label>
+    </div>
+
+    <label class="field">
+      <span>Descripcion</span>
+      <textarea
+        formControlName="description"
+        rows="4"
+        placeholder="Opcional: beneficios, ingredientes, uso recomendado o notas del servicio."
+      ></textarea>
+      <div class="field__meta">
+        <small>Opcional</small>
+        <small>{{ descriptionLength }}/280</small>
+      </div>
+      <small *ngIf="hasControlError('description', 'maxlength')" class="error-text">
+        La descripcion no debe superar 280 caracteres.
+      </small>
+    </label>
+
+    <div class="field">
+      <span>Imagen del producto</span>
+      <div class="upload-box">
+        <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" />
+        <div>
+          <strong>Sube una foto si la tienes</strong>
+          <p>Formatos recomendados: JPG o PNG. Tamano maximo: 2 MB.</p>
+        </div>
+        <button
+          *ngIf="selectedFile"
+          type="button"
+          class="secondary-button"
+          (click)="removeSelectedImage(fileInput)"
+        >
+          Quitar imagen
+        </button>
+      </div>
+      <small *ngIf="imageError" class="error-text">{{ imageError }}</small>
+    </div>
+
+    <div *ngIf="submitError" class="submit-feedback submit-feedback--error">
+      {{ submitError }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-button" [disabled]="productForm.invalid || isLoading">
+        <span class="button-loader" *ngIf="isLoading"></span>
+        {{
+          isLoading
+            ? (isEditing ? 'Actualizando producto...' : 'Guardando producto...')
+            : (isEditing ? 'Actualizar producto' : 'Guardar producto')
+        }}
+      </button>
+
+      <button *ngIf="isEditing" type="button" class="secondary-button" (click)="cancelEdit()">
+        Cancelar edicion
+      </button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,1220 @@
+<div class="catalog-page">
+  <div class="catalog-page__glow catalog-page__glow--top"></div>
+  <div class="catalog-page__glow catalog-page__glow--bottom"></div>
+
+  <header class="hero">
+    <div class="hero__copy">
+      <div>
+        <h1>Gestion de peluqueria Beta</h1>
+        <p style="margin: 0.85rem 0 0; max-width: 32rem; color: var(--muted); line-height: 1.6;">
+          {{ heroLead }}
+        </p>
+      </div>
+
+      <div style="display: grid; gap: 0.75rem; justify-items: end; width: min(100%, 360px);">
+        <button type="button" class="theme-toggle-button" (click)="toggleTheme()">
+          {{ themeToggleLabel }}
+        </button>
+
+        <app-access-panel
+          [isAuthReady]="isAuthReady"
+          [isAdmin]="isAdmin"
+          [currentUserEmail]="currentUserEmail"
+          [adminEmail]="adminEmail"
+          [isSendingAccessLink]="isSendingAdminAccessLink"
+          (requestAdminAccess)="sendAdminAccessLink()"
+          (signOutRequested)="signOutAdministrator()"
+        ></app-access-panel>
+      </div>
+    </div>
+  </header>
+
+  <section class="section-switcher" [style.gridTemplateColumns]="sectionSwitcherTemplateColumns">
+    <button
+      type="button"
+      class="section-switcher__button"
+      [class.section-switcher__button--active]="activeSection === 'products'"
+      (click)="setActiveSection('products')"
+    >
+      Productos
+    </button>
+
+    <button
+      type="button"
+      class="section-switcher__button section-switcher__button--services"
+      [class.section-switcher__button--active]="activeSection === 'services'"
+      (click)="setActiveSection('services')"
+    >
+      Servicios
+    </button>
+
+    <button
+      *ngIf="isAdmin"
+      type="button"
+      class="section-switcher__button section-switcher__button--cash"
+      [class.section-switcher__button--active]="activeSection === 'cash'"
+      (click)="setActiveSection('cash')"
+    >
+      Caja
+    </button>
+
+    <button
+      *ngIf="isAdmin"
+      type="button"
+      class="section-switcher__button section-switcher__button--inventory"
+      [class.section-switcher__button--active]="activeSection === 'inventory'"
+      (click)="setActiveSection('inventory')"
+    >
+      Inventario
+    </button>
+
+    <button
+      *ngIf="isAdmin"
+      type="button"
+      class="section-switcher__button section-switcher__button--support"
+      [class.section-switcher__button--active]="activeSection === 'support'"
+      (click)="setActiveSection('support')"
+    >
+      Soporte
+    </button>
+  </section>
+
+  <section class="overview-card" *ngIf="activeSection === 'products'">
+    <div class="overview-card__header">
+      <div>
+        <span class="section-heading__eyebrow">Productos</span>
+        <h2>Estadisticas del catalogo</h2>
+        <p>Resumen rapido del inventario y del valor actual de tus productos.</p>
+      </div>
+      <span class="overview-card__chip">{{ latestProductName }}</span>
+    </div>
+
+    <div class="overview-card__stats">
+      <article>
+        <span>Total de productos</span>
+        <strong>{{ totalProducts }}</strong>
+      </article>
+      <article>
+        <span>Con imagen propia</span>
+        <strong>{{ productsWithCustomImage }}</strong>
+      </article>
+      <article>
+        <span>Precio promedio</span>
+        <strong>{{ averageProductPrice | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+      </article>
+      <article>
+        <span>Valor total</span>
+        <strong>{{ catalogValue | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="overview-card overview-card--services" *ngIf="activeSection === 'services'">
+    <div class="overview-card__header">
+      <div>
+        <span class="section-heading__eyebrow">Servicios</span>
+        <h2>Estadisticas de peluqueria</h2>
+        <p>Monitorea tus servicios, sus duraciones y el precio promedio de atencion.</p>
+      </div>
+      <span class="overview-card__chip">{{ featuredServiceName }}</span>
+    </div>
+
+    <div class="overview-card__stats">
+      <article>
+        <span>Total de servicios</span>
+        <strong>{{ totalServices }}</strong>
+      </article>
+      <article>
+        <span>Categoria principal</span>
+        <strong>{{ mainServiceCategory }}</strong>
+      </article>
+      <article>
+        <span>Tarifa promedio</span>
+        <strong>{{ averageServicePrice | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+      </article>
+      <article>
+        <span>Duracion promedio</span>
+        <strong>{{ averageServiceDurationLabel }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="overview-card overview-card--cash" *ngIf="isAdmin && activeSection === 'cash'">
+    <div class="overview-card__header">
+      <div>
+        <span class="section-heading__eyebrow">Caja</span>
+        <h2>Control financiero del salon</h2>
+        <p>Consulta ingresos, egresos, cierres y movimientos historicos del periodo activo.</p>
+      </div>
+      <span class="overview-card__chip">{{ latestCashMovementConcept }}</span>
+    </div>
+
+    <div class="overview-card__stats">
+      <article>
+        <span>Ingresos</span>
+        <strong>{{ cashIncomeTotal | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+      </article>
+      <article>
+        <span>Egresos</span>
+        <strong>{{ cashExpenseTotal | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+      </article>
+      <article>
+        <span>Balance</span>
+        <strong>{{ cashBalance | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+      </article>
+      <article>
+        <span>Movimientos</span>
+        <strong>{{ cashMovementCount }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="overview-card overview-card--inventory" *ngIf="isAdmin && activeSection === 'inventory'">
+    <div class="overview-card__header">
+      <div>
+        <span class="section-heading__eyebrow">Inventario</span>
+        <h2>Control de productos e insumos</h2>
+        <p>Consulta stock, alertas, movimientos historicos y trazabilidad del inventario del salon.</p>
+      </div>
+      <span class="overview-card__chip">{{ latestInventoryLabel }}</span>
+    </div>
+
+    <div class="overview-card__stats">
+      <article>
+        <span>Items registrados</span>
+        <strong>{{ totalInventoryItems }}</strong>
+      </article>
+      <article>
+        <span>Alertas activas</span>
+        <strong>{{ lowStockCount }}</strong>
+      </article>
+      <article>
+        <span>Stock visible</span>
+        <strong>{{ formatInventoryQuantity(inventoryUnitsOnHand) }}</strong>
+      </article>
+      <article>
+        <span>Mayor rotacion</span>
+        <strong>{{ inventoryTopRotationLabel }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="overview-card overview-card--support" *ngIf="isAdmin && activeSection === 'support'">
+    <div class="overview-card__header">
+      <div>
+        <span class="section-heading__eyebrow">Soporte y ayuda</span>
+        <h2>Asistencia, FAQ y seguimiento</h2>
+        <p>Centraliza preguntas frecuentes, tickets internos y orientacion contextual del sistema.</p>
+      </div>
+      <span class="overview-card__chip">{{ latestSupportTicketTitle }}</span>
+    </div>
+
+    <div class="overview-card__stats">
+      <article>
+        <span>Tickets totales</span>
+        <strong>{{ totalSupportTickets }}</strong>
+      </article>
+      <article>
+        <span>Casos abiertos</span>
+        <strong>{{ openSupportTickets }}</strong>
+      </article>
+      <article>
+        <span>Casos resueltos</span>
+        <strong>{{ resolvedSupportTickets }}</strong>
+      </article>
+      <article>
+        <span>Prioridad alta</span>
+        <strong>{{ highPrioritySupportTickets }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <main class="workspace" *ngIf="activeSection === 'products'" [style.gridTemplateColumns]="isAdmin ? null : '1fr'">
+    <section class="workspace__form" *ngIf="isAdmin">
+      <app-product-form
+        [productToEdit]="editingProduct"
+        (productAdded)="onProductAdded()"
+        (editCancelled)="cancelProductEdit()"
+      ></app-product-form>
+    </section>
+
+    <section class="workspace__content workspace__content--single">
+      <section class="workspace__catalog">
+        <div class="section-heading">
+          <div>
+            <span class="section-heading__eyebrow">Catalogo conectado</span>
+            <h2>Productos disponibles</h2>
+            <p>
+              {{
+                isAdmin
+                  ? 'Seleccionaste productos. Aqui ves y administras unicamente este apartado.'
+                  : 'Seleccionaste productos. En este modo solo puedes consultar el catalogo disponible.'
+              }}
+            </p>
+          </div>
+
+          <button class="refresh-button" type="button" (click)="loadProducts()" [disabled]="isLoadingProducts">
+            {{ isLoadingProducts ? 'Actualizando...' : 'Actualizar lista' }}
+          </button>
+        </div>
+
+        <div *ngIf="productsErrorMessage" class="state-message state-message--error">
+          {{ productsErrorMessage }}
+        </div>
+
+        <div *ngIf="isLoadingProducts" class="loading-grid">
+          <div class="loading-card" *ngFor="let placeholder of [1, 2, 3]"></div>
+        </div>
+
+        <div *ngIf="!isLoadingProducts && products.length" class="catalog-grid">
+          <article class="product-card" *ngFor="let product of products; trackBy: trackByProduct">
+            <div class="product-card__image">
+              <img
+                [src]="product.image_url || defaultImageUrl"
+                [alt]="product.name"
+                (error)="onImageError($event)"
+              />
+            </div>
+
+            <div class="product-card__content">
+              <div class="product-card__title">
+                <h3>{{ product.name }}</h3>
+                <span>{{ product.image_path ? 'Imagen propia' : 'Imagen suplementaria' }}</span>
+              </div>
+
+              <p class="product-card__price">
+                {{ product.price | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}
+              </p>
+
+              <p class="product-card__description">
+                {{
+                  product.description ||
+                    'Sin descripcion cargada. Puedes aprovechar este espacio para beneficios, modo de uso o resultado esperado.'
+                }}
+              </p>
+
+              <div class="product-card__footer">
+                <span>Creado {{ product.created_at | date:'d MMM y':'':'es-CO' }}</span>
+                <span>ID {{ product.id | slice:0:8 }}</span>
+              </div>
+
+              <div class="card-actions" *ngIf="isAdmin">
+                <button
+                  class="edit-card-button"
+                  type="button"
+                  (click)="startProductEdit(product)"
+                  [disabled]="deletingProductId === product.id"
+                >
+                  Editar
+                </button>
+
+                <button
+                  class="delete-service-button delete-service-button--product"
+                  type="button"
+                  (click)="deleteProduct(product)"
+                  [disabled]="deletingProductId === product.id"
+                >
+                  {{ deletingProductId === product.id ? 'Eliminando...' : 'Eliminar producto' }}
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div *ngIf="!isLoadingProducts && !products.length" class="empty-state">
+          <span class="empty-state__eyebrow">Catalogo vacio</span>
+          <h3>{{ isAdmin ? 'Empieza agregando tu primer producto.' : 'Aun no hay productos visibles.' }}</h3>
+          <p>
+            {{
+              isAdmin
+                ? 'Usa el formulario para registrar shampoos, mascarillas, tratamientos o cualquier producto que vendas en la peluqueria.'
+                : 'Cuando el administrador cargue productos en el sistema, aqui apareceran para consulta.'
+            }}
+          </p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <main class="workspace" *ngIf="activeSection === 'services'" [style.gridTemplateColumns]="isAdmin ? null : '1fr'">
+    <section class="workspace__form" *ngIf="isAdmin">
+      <app-service-form
+        [serviceToEdit]="editingService"
+        (serviceAdded)="onServiceAdded()"
+        (editCancelled)="cancelServiceEdit()"
+      ></app-service-form>
+    </section>
+
+    <section class="workspace__content workspace__content--single">
+      <section class="workspace__services">
+        <div class="section-heading">
+          <div>
+            <span class="section-heading__eyebrow">Servicios de peluqueria</span>
+            <h2>Servicios disponibles</h2>
+            <p>
+              {{
+                isAdmin
+                  ? 'Seleccionaste servicios. Aqui se despliega solo este apartado con su propio formulario.'
+                  : 'Seleccionaste servicios. En este modo solo puedes revisar el listado publicado.'
+              }}
+            </p>
+          </div>
+
+          <button
+            class="refresh-button refresh-button--services"
+            type="button"
+            (click)="loadServices()"
+            [disabled]="isLoadingServices"
+          >
+            {{ isLoadingServices ? 'Actualizando...' : 'Actualizar lista' }}
+          </button>
+        </div>
+
+        <div *ngIf="servicesErrorMessage" class="state-message state-message--error">
+          {{ servicesErrorMessage }}
+        </div>
+
+        <div *ngIf="isLoadingServices" class="loading-grid">
+          <div class="loading-card" *ngFor="let placeholder of [1, 2, 3]"></div>
+        </div>
+
+        <div *ngIf="!isLoadingServices && services.length" class="service-grid">
+          <article class="service-card" *ngFor="let service of services; trackBy: trackByService">
+            <div class="service-card__top">
+              <span class="service-card__category">{{ service.category }}</span>
+              <span class="service-card__badge">{{ service.badge || 'Destacado' }}</span>
+            </div>
+
+            <h3>{{ service.name }}</h3>
+            <p>
+              {{
+                service.description ||
+                  'Servicio sin descripcion. Puedes usar este espacio para explicar el resultado o el beneficio.'
+              }}
+            </p>
+
+            <div class="service-card__details">
+              <span>{{ formatServiceDuration(service.duration_minutes) }}</span>
+              <strong>{{ service.price | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+            </div>
+
+            <div class="card-actions" *ngIf="isAdmin">
+              <button
+                class="edit-card-button edit-card-button--services"
+                type="button"
+                (click)="startServiceEdit(service)"
+                [disabled]="deletingServiceId === service.id"
+              >
+                Editar
+              </button>
+
+              <button
+                class="delete-service-button"
+                type="button"
+                (click)="deleteService(service)"
+                [disabled]="deletingServiceId === service.id"
+              >
+                {{ deletingServiceId === service.id ? 'Eliminando...' : 'Eliminar servicio' }}
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <div *ngIf="!isLoadingServices && !services.length" class="empty-state">
+          <span class="empty-state__eyebrow">Sin servicios</span>
+          <h3>{{ isAdmin ? 'Agrega tu primer servicio.' : 'Aun no hay servicios visibles.' }}</h3>
+          <p>
+            {{
+              isAdmin
+                ? 'Crea servicios como corte, cepillado, coloracion o tratamientos con su duracion y precio.'
+                : 'Cuando el administrador publique servicios, aqui apareceran disponibles para consulta.'
+            }}
+          </p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <main class="workspace" *ngIf="isAdmin && activeSection === 'cash'">
+    <section class="workspace__form">
+      <app-cash-form
+        [movementToEdit]="editingCashMovement"
+        (movementAdded)="onCashMovementAdded()"
+        (editCancelled)="cancelCashMovementEdit()"
+      ></app-cash-form>
+    </section>
+
+    <section class="workspace__content workspace__content--single">
+      <section class="workspace__cash">
+        <div class="section-heading">
+          <div>
+            <span class="section-heading__eyebrow">Gestion de caja</span>
+            <h2>Ingresos, egresos y cierres</h2>
+            <p>Analiza la caja diaria, consulta historicos, genera cierres y exporta reportes del salon.</p>
+          </div>
+
+          <button
+            class="refresh-button refresh-button--cash"
+            type="button"
+            (click)="loadCashMovements()"
+            [disabled]="isLoadingCash"
+          >
+            {{ isLoadingCash ? 'Actualizando...' : 'Actualizar caja' }}
+          </button>
+        </div>
+
+        <div class="cash-toolbar">
+          <div class="cash-filter-bar">
+            <button
+              type="button"
+              class="cash-filter-button"
+              [class.cash-filter-button--active]="cashPeriodPreset === 'today'"
+              (click)="setCashPreset('today')"
+            >
+              Hoy
+            </button>
+            <button
+              type="button"
+              class="cash-filter-button"
+              [class.cash-filter-button--active]="cashPeriodPreset === 'month'"
+              (click)="setCashPreset('month')"
+            >
+              Mes actual
+            </button>
+            <button
+              type="button"
+              class="cash-filter-button"
+              [class.cash-filter-button--active]="cashPeriodPreset === 'custom'"
+              (click)="setCashPreset('custom')"
+            >
+              Personalizado
+            </button>
+          </div>
+
+          <div class="cash-toolbar__actions">
+            <button type="button" class="cash-action-button" (click)="generateCashClosure()">
+              Generar cierre
+            </button>
+            <button type="button" class="cash-action-button cash-action-button--secondary" (click)="exportCashCsv()">
+              Exportar CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="cash-range-grid">
+          <label class="cash-range-field">
+            <span>Desde</span>
+            <input type="date" [value]="cashRangeStart" (input)="updateCashRange('start', $event)" />
+          </label>
+
+          <label class="cash-range-field">
+            <span>Hasta</span>
+            <input type="date" [value]="cashRangeEnd" (input)="updateCashRange('end', $event)" />
+          </label>
+
+          <div class="cash-range-meta">
+            <span>Periodo activo</span>
+            <strong>{{ selectedCashRangeLabel }}</strong>
+            <small>{{ totalCashMovements }} movimientos historicos cargados</small>
+          </div>
+        </div>
+
+        <div *ngIf="cashErrorMessage" class="state-message state-message--error">
+          {{ cashErrorMessage }}
+        </div>
+
+        <div *ngIf="isLoadingCash" class="loading-grid">
+          <div class="loading-card" *ngFor="let placeholder of [1, 2, 3]"></div>
+        </div>
+
+        <ng-container *ngIf="!isLoadingCash">
+          <div class="cash-stat-grid">
+            <article class="cash-stat-card cash-stat-card--income">
+              <span>Ingresos del rango</span>
+              <strong>{{ cashIncomeTotal | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+              <small>Ventas, servicios y entradas registradas.</small>
+            </article>
+
+            <article class="cash-stat-card cash-stat-card--expense">
+              <span>Egresos del rango</span>
+              <strong>{{ cashExpenseTotal | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+              <small>Compras, pagos operativos y salidas.</small>
+            </article>
+
+            <article
+              class="cash-stat-card"
+              [class.cash-stat-card--income]="cashBalance >= 0"
+              [class.cash-stat-card--expense]="cashBalance < 0"
+            >
+              <span>Balance en tiempo real</span>
+              <strong>{{ cashBalance | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+              <small>Resultado neto del periodo filtrado.</small>
+            </article>
+
+            <article class="cash-stat-card cash-stat-card--neutral">
+              <span>Categoria mas activa</span>
+              <strong>{{ cashTopCategory }}</strong>
+              <small>{{ cashMovementCount }} movimientos dentro del periodo.</small>
+            </article>
+          </div>
+
+          <div class="cash-panels">
+            <article class="cash-panel">
+              <div class="cash-panel__header">
+                <div>
+                  <span class="cash-panel__eyebrow">Resumen inteligente</span>
+                  <h3>Lectura automatica del comportamiento financiero</h3>
+                </div>
+              </div>
+
+              <p class="cash-panel__lead">{{ cashAiNarrative }}</p>
+
+              <div class="cash-insights">
+                <article
+                  class="cash-insight"
+                  *ngFor="let insight of cashInsights"
+                  [class.cash-insight--good]="insight.level === 'good'"
+                  [class.cash-insight--warning]="insight.level === 'warning'"
+                  [class.cash-insight--neutral]="insight.level === 'neutral'"
+                >
+                  <strong>{{ insight.title }}</strong>
+                  <p>{{ insight.description }}</p>
+                </article>
+              </div>
+            </article>
+
+            <article class="cash-panel">
+              <div class="cash-panel__header">
+                <div>
+                  <span class="cash-panel__eyebrow">Cierre automatico</span>
+                  <h3>Reporte detallado del periodo</h3>
+                </div>
+                <span class="cash-panel__stamp">{{ cashClosureGeneratedLabel }}</span>
+              </div>
+
+              <div class="cash-report-list">
+                <article
+                  class="cash-report-item"
+                  *ngFor="let item of cashReportItems"
+                  [class.cash-report-item--income]="item.tone === 'income'"
+                  [class.cash-report-item--expense]="item.tone === 'expense'"
+                >
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.value }}</strong>
+                </article>
+              </div>
+            </article>
+          </div>
+
+          <article class="cash-panel cash-panel--trend">
+            <div class="cash-panel__header">
+              <div>
+                <span class="cash-panel__eyebrow">Grafico comparativo</span>
+                <h3>Ingresos vs egresos por fecha</h3>
+              </div>
+            </div>
+
+            <div class="cash-trend" *ngIf="cashTrendPoints.length; else emptyTrendState">
+              <div class="cash-trend__legend">
+                <span class="cash-trend__legend-item cash-trend__legend-item--income">Ingresos</span>
+                <span class="cash-trend__legend-item cash-trend__legend-item--expense">Egresos</span>
+              </div>
+
+              <div class="cash-trend__row" *ngFor="let point of cashTrendPoints">
+                <span class="cash-trend__label">{{ point.label }}</span>
+
+                <div class="cash-trend__bars">
+                  <span
+                    class="cash-trend__bar cash-trend__bar--income"
+                    [style.width.%]="getTrendWidth(point.income, maxCashTrendValue)"
+                  ></span>
+                  <span
+                    class="cash-trend__bar cash-trend__bar--expense"
+                    [style.width.%]="getTrendWidth(point.expense, maxCashTrendValue)"
+                  ></span>
+                </div>
+
+                <div class="cash-trend__values">
+                  <strong>{{ point.income | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</strong>
+                  <span>{{ point.expense | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #emptyTrendState>
+              <div class="empty-state empty-state--inline">
+                <span class="empty-state__eyebrow">Sin grafico</span>
+                <h3>El comparativo aparecera con tus primeros movimientos.</h3>
+                <p>Cuando registres ingresos o egresos, aqui veras la tendencia del periodo filtrado.</p>
+              </div>
+            </ng-template>
+          </article>
+
+          <section *ngIf="filteredCashMovements.length; else emptyCashState" class="cash-history">
+            <div class="section-heading section-heading--compact">
+              <div>
+                <span class="section-heading__eyebrow">Historial</span>
+                <h2>Movimientos del periodo</h2>
+                <p>Consulta cada ingreso o egreso y elimina registros cuando sea necesario.</p>
+              </div>
+            </div>
+
+            <div class="cash-movement-list">
+              <article class="cash-movement-card" *ngFor="let movement of filteredCashMovements; trackBy: trackByCashMovement">
+                <div class="cash-movement-card__top">
+                  <div class="cash-movement-card__pills">
+                    <span
+                      class="cash-movement-pill"
+                      [class.cash-movement-pill--income]="movement.type === 'income'"
+                      [class.cash-movement-pill--expense]="movement.type === 'expense'"
+                    >
+                      {{ movement.type === 'income' ? 'Ingreso' : 'Egreso' }}
+                    </span>
+                    <span class="cash-movement-pill cash-movement-pill--muted">{{ movement.category }}</span>
+                  </div>
+
+                  <strong
+                    class="cash-movement-amount"
+                    [class.cash-movement-amount--income]="movement.type === 'income'"
+                    [class.cash-movement-amount--expense]="movement.type === 'expense'"
+                  >
+                    {{ movement.amount | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}
+                  </strong>
+                </div>
+
+                <h3>{{ movement.concept }}</h3>
+                <p>{{ movement.notes || 'Sin observaciones adicionales para este movimiento.' }}</p>
+
+                <div class="cash-movement-card__footer">
+                  <span>{{ formatCashDate(movement.movement_date) }}</span>
+                  <span>Registro {{ formatCashCreatedAt(movement.created_at) }}</span>
+                </div>
+
+                <div class="card-actions">
+                  <button
+                    class="edit-card-button edit-card-button--cash"
+                    type="button"
+                    (click)="startCashMovementEdit(movement)"
+                    [disabled]="deletingCashMovementId === movement.id"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    class="delete-service-button delete-service-button--cash"
+                    type="button"
+                    (click)="deleteCashMovement(movement)"
+                    [disabled]="deletingCashMovementId === movement.id"
+                  >
+                    {{ deletingCashMovementId === movement.id ? 'Eliminando...' : 'Eliminar movimiento' }}
+                  </button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <ng-template #emptyCashState>
+            <div class="empty-state">
+              <span class="empty-state__eyebrow">Caja vacia</span>
+              <h3>Empieza registrando tu primer ingreso o egreso.</h3>
+              <p>
+                Usa el formulario de caja para guardar ventas, pagos, compras o gastos operativos con su fecha.
+              </p>
+            </div>
+          </ng-template>
+        </ng-container>
+      </section>
+    </section>
+  </main>
+
+  <main class="workspace" *ngIf="isAdmin && activeSection === 'inventory'">
+    <section class="workspace__form">
+      <app-inventory-form
+        [inventoryItems]="inventoryItems"
+        [itemToEdit]="editingInventoryItem"
+        [movementToEdit]="editingInventoryMovement"
+        (inventoryUpdated)="onInventoryUpdated()"
+        (itemEditCancelled)="cancelInventoryItemEdit()"
+        (movementEditCancelled)="cancelInventoryMovementEdit()"
+      ></app-inventory-form>
+    </section>
+
+    <section class="workspace__content workspace__content--single">
+      <section class="workspace__inventory">
+        <div class="section-heading">
+          <div>
+            <span class="section-heading__eyebrow">Control de inventario</span>
+            <h2>Stock, alertas y trazabilidad</h2>
+            <p>Filtra por categoria o nombre, consulta salidas y revisa que items necesitan reposicion.</p>
+          </div>
+
+          <button
+            class="refresh-button refresh-button--inventory"
+            type="button"
+            (click)="loadInventoryData()"
+            [disabled]="isLoadingInventory"
+          >
+            {{ isLoadingInventory ? 'Actualizando...' : 'Actualizar inventario' }}
+          </button>
+        </div>
+
+        <div class="inventory-toolbar">
+          <label class="inventory-filter-field">
+            <span>Buscar item</span>
+            <input
+              type="text"
+              [value]="inventorySearchTerm"
+              (input)="updateInventorySearch($event)"
+              placeholder="Shampoo, tintura, guantes..."
+            />
+          </label>
+
+          <label class="inventory-filter-field">
+            <span>Categoria</span>
+            <select [value]="inventoryCategoryFilter" (change)="updateInventoryCategoryFilter($event)">
+              <option value="all">Todas</option>
+              <option *ngFor="let category of inventoryCategories" [value]="category">{{ category }}</option>
+            </select>
+          </label>
+
+          <div class="inventory-stock-switcher">
+            <button
+              type="button"
+              class="inventory-stock-switcher__button"
+              [class.inventory-stock-switcher__button--active]="inventoryStockFilter === 'all'"
+              (click)="setInventoryStockFilter('all')"
+            >
+              Todos
+            </button>
+            <button
+              type="button"
+              class="inventory-stock-switcher__button"
+              [class.inventory-stock-switcher__button--active]="inventoryStockFilter === 'low'"
+              (click)="setInventoryStockFilter('low')"
+            >
+              Bajo minimo
+            </button>
+            <button
+              type="button"
+              class="inventory-stock-switcher__button"
+              [class.inventory-stock-switcher__button--active]="inventoryStockFilter === 'healthy'"
+              (click)="setInventoryStockFilter('healthy')"
+            >
+              Estables
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="inventoryErrorMessage" class="state-message state-message--error">
+          {{ inventoryErrorMessage }}
+        </div>
+
+        <div *ngIf="isLoadingInventory" class="loading-grid">
+          <div class="loading-card" *ngFor="let placeholder of [1, 2, 3]"></div>
+        </div>
+
+        <ng-container *ngIf="!isLoadingInventory">
+          <div class="inventory-stat-grid">
+            <article class="inventory-stat-card inventory-stat-card--neutral">
+              <span>Items visibles</span>
+              <strong>{{ filteredInventoryItems.length }}</strong>
+              <small>Items del filtro actual.</small>
+            </article>
+
+            <article class="inventory-stat-card inventory-stat-card--warning">
+              <span>Alertas de reposicion</span>
+              <strong>{{ lowStockCount }}</strong>
+              <small>Items por debajo del minimo.</small>
+            </article>
+
+            <article class="inventory-stat-card inventory-stat-card--good">
+              <span>Unidades disponibles</span>
+              <strong>{{ formatInventoryQuantity(inventoryUnitsOnHand) }}</strong>
+              <small>Stock sumado de los items visibles.</small>
+            </article>
+
+            <article class="inventory-stat-card inventory-stat-card--neutral">
+              <span>Movimientos visibles</span>
+              <strong>{{ inventoryMovementCount }}</strong>
+              <small>Entradas y salidas con trazabilidad.</small>
+            </article>
+          </div>
+
+          <div class="inventory-panels">
+            <article class="inventory-panel">
+              <div class="inventory-panel__header">
+                <div>
+                  <span class="inventory-panel__eyebrow">Resumen inteligente</span>
+                  <h3>Lectura del estado del inventario</h3>
+                </div>
+              </div>
+
+              <p class="inventory-panel__lead">{{ inventoryAiNarrative }}</p>
+
+              <div class="inventory-insights">
+                <article
+                  class="inventory-insight"
+                  *ngFor="let insight of inventoryInsights"
+                  [class.inventory-insight--good]="insight.level === 'good'"
+                  [class.inventory-insight--warning]="insight.level === 'warning'"
+                  [class.inventory-insight--neutral]="insight.level === 'neutral'"
+                >
+                  <strong>{{ insight.title }}</strong>
+                  <p>{{ insight.description }}</p>
+                </article>
+              </div>
+            </article>
+
+            <article class="inventory-panel">
+              <div class="inventory-panel__header">
+                <div>
+                  <span class="inventory-panel__eyebrow">Alertas de stock</span>
+                  <h3>Items que requieren atencion</h3>
+                </div>
+              </div>
+
+              <div class="inventory-alert-list" *ngIf="inventoryAlerts.length; else noInventoryAlerts">
+                <article
+                  class="inventory-alert-card"
+                  *ngFor="let alert of inventoryAlerts"
+                  [class.inventory-alert-card--critical]="alert.level === 'critical'"
+                >
+                  <div>
+                    <strong>{{ alert.name }}</strong>
+                    <p>{{ alert.category }}</p>
+                  </div>
+                  <div class="inventory-alert-card__values">
+                    <span>{{ formatInventoryQuantity(alert.currentStock) }} {{ alert.unit }}</span>
+                    <small>Min. {{ formatInventoryQuantity(alert.minStock) }} {{ alert.unit }}</small>
+                  </div>
+                </article>
+              </div>
+
+              <ng-template #noInventoryAlerts>
+                <div class="empty-state empty-state--inline">
+                  <span class="empty-state__eyebrow">Sin alertas</span>
+                  <h3>Todo el inventario esta por encima del minimo.</h3>
+                  <p>Cuando algun item baje de nivel, aqui aparecera para reposicion inmediata.</p>
+                </div>
+              </ng-template>
+            </article>
+          </div>
+
+          <section *ngIf="filteredInventoryItems.length; else emptyInventoryState" class="inventory-section">
+            <div class="section-heading section-heading--compact">
+              <div>
+                <span class="section-heading__eyebrow">Items</span>
+                <h2>Productos e insumos registrados</h2>
+                <p>Consulta el stock actual, el minimo configurado y el estado de cada item.</p>
+              </div>
+            </div>
+
+            <div class="inventory-item-grid">
+              <article class="inventory-item-card" *ngFor="let item of filteredInventoryItems; trackBy: trackByInventoryItem">
+                <div class="inventory-item-card__top">
+                  <span class="inventory-item-card__category">{{ item.category }}</span>
+                  <span class="inventory-item-card__status" [ngClass]="getInventoryStatusClass(item)">
+                    {{ getInventoryStatusLabel(item) }}
+                  </span>
+                </div>
+
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.notes || 'Sin notas adicionales para este item del inventario.' }}</p>
+
+                <div class="inventory-item-card__stats">
+                  <div>
+                    <span>Stock actual</span>
+                    <strong>{{ formatInventoryQuantity(item.current_stock) }} {{ item.unit }}</strong>
+                  </div>
+                  <div>
+                    <span>Stock minimo</span>
+                    <strong>{{ formatInventoryQuantity(item.min_stock) }} {{ item.unit }}</strong>
+                  </div>
+                </div>
+
+                <div class="inventory-item-card__footer">
+                  <span>Creado {{ item.created_at | date:'d MMM y':'':'es-CO' }}</span>
+                  <span>ID {{ item.id | slice:0:8 }}</span>
+                </div>
+
+                <div class="card-actions">
+                  <button
+                    class="edit-card-button edit-card-button--inventory"
+                    type="button"
+                    (click)="startInventoryItemEdit(item)"
+                  >
+                    Editar item
+                  </button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section *ngIf="filteredInventoryMovements.length" class="inventory-section">
+            <div class="section-heading section-heading--compact">
+              <div>
+                <span class="section-heading__eyebrow">Historial</span>
+                <h2>Entradas y salidas trazables</h2>
+                <p>Revisa el detalle de cada movimiento y elimina registros cuando sea necesario.</p>
+              </div>
+            </div>
+
+            <div class="inventory-movement-list">
+              <article
+                class="inventory-movement-card"
+                *ngFor="let movement of filteredInventoryMovements; trackBy: trackByInventoryMovement"
+              >
+                <div class="inventory-movement-card__top">
+                  <div class="inventory-movement-card__pills">
+                    <span
+                      class="inventory-movement-pill"
+                      [class.inventory-movement-pill--entry]="movement.movement_type === 'entry'"
+                      [class.inventory-movement-pill--exit]="movement.movement_type === 'exit'"
+                    >
+                      {{ formatInventoryMovementType(movement.movement_type) }}
+                    </span>
+                    <span class="inventory-movement-pill inventory-movement-pill--muted">{{ movement.item_category }}</span>
+                  </div>
+
+                  <strong
+                    class="inventory-movement-card__quantity"
+                    [class.inventory-movement-card__quantity--entry]="movement.movement_type === 'entry'"
+                    [class.inventory-movement-card__quantity--exit]="movement.movement_type === 'exit'"
+                  >
+                    {{ formatInventoryQuantity(movement.quantity) }} {{ movement.item_unit }}
+                  </strong>
+                </div>
+
+                <h3>{{ movement.item_name }}</h3>
+                <p>{{ movement.reason }}</p>
+
+                <div class="inventory-movement-card__meta">
+                  <span>{{ movement.reference_label || 'Sin referencia adicional' }}</span>
+                  <span>{{ movement.notes || 'Sin notas extra' }}</span>
+                </div>
+
+                <div class="inventory-movement-card__footer">
+                  <span>{{ movement.movement_date | date:'d MMM y':'':'es-CO' }}</span>
+                  <span>Registro {{ formatCashCreatedAt(movement.created_at) }}</span>
+                </div>
+
+                <div class="card-actions">
+                  <button
+                    class="edit-card-button edit-card-button--inventory"
+                    type="button"
+                    (click)="startInventoryMovementEdit(movement)"
+                    [disabled]="deletingInventoryMovementId === movement.id"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    class="delete-service-button delete-service-button--inventory"
+                    type="button"
+                    (click)="deleteInventoryMovement(movement)"
+                    [disabled]="deletingInventoryMovementId === movement.id"
+                  >
+                    {{ deletingInventoryMovementId === movement.id ? 'Eliminando...' : 'Eliminar movimiento' }}
+                  </button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <ng-template #emptyInventoryState>
+            <div class="empty-state">
+              <span class="empty-state__eyebrow">Inventario vacio</span>
+              <h3>Empieza creando tu primer item del inventario.</h3>
+              <p>
+                Registra shampoos, tinturas, tratamientos o insumos y luego lleva cada entrada o salida con trazabilidad.
+              </p>
+            </div>
+          </ng-template>
+        </ng-container>
+      </section>
+    </section>
+  </main>
+
+  <main class="workspace" *ngIf="isAdmin && activeSection === 'support'">
+    <section class="workspace__form">
+      <app-support-form
+        [supportContext]="supportContext"
+        [ticketToEdit]="editingSupportTicket"
+        (ticketCreated)="onSupportTicketCreated()"
+        (editCancelled)="cancelSupportTicketEdit()"
+      ></app-support-form>
+    </section>
+
+    <section class="workspace__content workspace__content--single">
+      <section class="workspace__support">
+        <div class="section-heading">
+          <div>
+            <span class="section-heading__eyebrow">Centro de ayuda</span>
+            <h2>FAQ dinamica y casos de soporte</h2>
+            <p>Consulta respuestas frecuentes, revisa tickets y da seguimiento a incidentes del sistema.</p>
+          </div>
+
+          <button
+            class="refresh-button refresh-button--support"
+            type="button"
+            (click)="loadSupportTickets()"
+            [disabled]="isLoadingSupport"
+          >
+            {{ isLoadingSupport ? 'Actualizando...' : 'Actualizar soporte' }}
+          </button>
+        </div>
+
+        <div *ngIf="supportErrorMessage" class="state-message state-message--error">
+          {{ supportErrorMessage }}
+        </div>
+
+        <div *ngIf="isLoadingSupport" class="loading-grid">
+          <div class="loading-card" *ngFor="let placeholder of [1, 2, 3]"></div>
+        </div>
+
+        <ng-container *ngIf="!isLoadingSupport">
+          <div class="support-stat-grid">
+            <article class="support-stat-card support-stat-card--warning">
+              <span>Casos abiertos</span>
+              <strong>{{ openSupportTickets }}</strong>
+              <small>Tickets abiertos o en progreso.</small>
+            </article>
+
+            <article class="support-stat-card support-stat-card--good">
+              <span>Resueltos</span>
+              <strong>{{ resolvedSupportTickets }}</strong>
+              <small>Casos cerrados con seguimiento.</small>
+            </article>
+
+            <article class="support-stat-card support-stat-card--neutral">
+              <span>FAQ activas</span>
+              <strong>{{ supportFaqs.length }}</strong>
+              <small>Guias dinamicas segun el estado del sistema.</small>
+            </article>
+
+            <article class="support-stat-card support-stat-card--neutral">
+              <span>Alta prioridad</span>
+              <strong>{{ highPrioritySupportTickets }}</strong>
+              <small>Casos que necesitan atencion mas rapida.</small>
+            </article>
+          </div>
+
+          <div class="support-panels">
+            <article class="support-panel">
+              <div class="support-panel__header">
+                <div>
+                  <span class="support-panel__eyebrow">Preguntas frecuentes</span>
+                  <h3>Respuestas dinamicas</h3>
+                </div>
+              </div>
+
+              <div class="support-faq-list">
+                <article class="support-faq-card" *ngFor="let faq of supportFaqs">
+                  <div class="support-faq-card__top">
+                    <span class="support-faq-card__module">{{ getSupportModuleLabel(faq.module) }}</span>
+                  </div>
+                  <strong>{{ faq.question }}</strong>
+                  <p>{{ faq.answer }}</p>
+                </article>
+              </div>
+            </article>
+
+            <article class="support-panel">
+              <div class="support-panel__header">
+                <div>
+                  <span class="support-panel__eyebrow">Recomendaciones</span>
+                  <h3>Lectura preventiva del sistema</h3>
+                </div>
+              </div>
+
+              <div class="support-insights">
+                <article
+                  class="support-insight"
+                  *ngFor="let insight of supportInsights"
+                  [class.support-insight--good]="insight.level === 'good'"
+                  [class.support-insight--warning]="insight.level === 'warning'"
+                  [class.support-insight--neutral]="insight.level === 'neutral'"
+                >
+                  <strong>{{ insight.title }}</strong>
+                  <p>{{ insight.description }}</p>
+                </article>
+              </div>
+            </article>
+          </div>
+
+          <section *ngIf="supportTickets.length; else emptySupportState" class="support-history">
+            <div class="section-heading section-heading--compact">
+              <div>
+                <span class="section-heading__eyebrow">Seguimiento</span>
+                <h2>Tickets registrados</h2>
+                <p>Controla cada caso, cambia su estado y conserva el historial de soporte.</p>
+              </div>
+            </div>
+
+            <div class="support-ticket-list">
+              <article class="support-ticket-card" *ngFor="let ticket of supportTickets; trackBy: trackBySupportTicket">
+                <div class="support-ticket-card__top">
+                  <div class="support-ticket-card__pills">
+                    <span class="support-ticket-card__module">{{ getSupportModuleLabel(ticket.module) }}</span>
+                    <span class="support-ticket-card__priority" [ngClass]="getSupportPriorityClass(ticket.priority)">
+                      {{ getSupportPriorityLabel(ticket.priority) }}
+                    </span>
+                    <span class="support-ticket-card__status" [ngClass]="getSupportStatusClass(ticket.status)">
+                      {{ getSupportStatusLabel(ticket.status) }}
+                    </span>
+                  </div>
+                </div>
+
+                <h3>{{ ticket.title }}</h3>
+                <p>{{ ticket.description }}</p>
+
+                <div class="support-ticket-card__meta">
+                  <span>Creado {{ ticket.created_at | date:'d MMM y, h:mm a':'':'es-CO' }}</span>
+                  <span>Actualizado {{ ticket.updated_at | date:'d MMM y, h:mm a':'':'es-CO' }}</span>
+                </div>
+
+                <p class="support-ticket-card__resolution" *ngIf="ticket.resolution_note">
+                  {{ ticket.resolution_note }}
+                </p>
+
+                <div class="card-actions">
+                  <button
+                    class="edit-card-button edit-card-button--support"
+                    type="button"
+                    (click)="startSupportTicketEdit(ticket)"
+                    [disabled]="updatingSupportTicketId === ticket.id"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    class="delete-service-button delete-service-button--support"
+                    type="button"
+                    (click)="updateSupportTicketStatus(ticket)"
+                    [disabled]="updatingSupportTicketId === ticket.id"
+                  >
+                    {{
+                      updatingSupportTicketId === ticket.id
+                        ? 'Actualizando...'
+                        : getSupportTicketActionLabel(ticket)
+                    }}
+                  </button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <ng-template #emptySupportState>
+            <div class="empty-state">
+              <span class="empty-state__eyebrow">Sin tickets</span>
+              <h3>Empieza usando el asistente o creando tu primer caso.</h3>
+              <p>
+                Este modulo queda listo para responder preguntas frecuentes y registrar incidentes con trazabilidad.
+              </p>
+            </div>
+          </ng-template>
+        </ng-container>
+      </section>
+    </section>
+  </main>
+</div>

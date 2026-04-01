@@ -1,0 +1,93 @@
+<section class="cash-form-card">
+  <div class="cash-form-card__heading">
+    <span class="eyebrow">{{ headingLabel }}</span>
+    <h2>{{ headingTitle }}</h2>
+    <p>{{ headingDescription }}</p>
+  </div>
+
+  <div class="cash-preview-card">
+    <div class="cash-preview-card__top">
+      <span class="cash-pill" [class.cash-pill--expense]="controls['type'].value === 'expense'">
+        {{ movementTypeLabel }}
+      </span>
+      <span class="cash-pill cash-pill--muted">{{ controls['category'].value || 'Categoria' }}</span>
+    </div>
+
+    <h3>{{ controls['concept'].value || 'Ingreso por corte y cepillado' }}</h3>
+    <p>{{ controls['movementDate'].value || 'Sin fecha' }}</p>
+
+    <div class="cash-preview-card__footer">
+      <span>{{ controls['notes'].value || 'Sin observaciones' }}</span>
+      <strong>{{ controls['amount'].value ? (controls['amount'].value | currency:'COP':'symbol-narrow':'1.0-0':'es-CO') : '$ 0' }}</strong>
+    </div>
+  </div>
+
+  <form [formGroup]="cashForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="field-grid field-grid--compact">
+      <label class="field">
+        <span>Tipo *</span>
+        <select formControlName="type">
+          <option value="income">Ingreso</option>
+          <option value="expense">Egreso</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Fecha *</span>
+        <input formControlName="movementDate" type="date" />
+      </label>
+    </div>
+
+    <div class="field-grid">
+      <label class="field">
+        <span>Categoria *</span>
+        <input formControlName="category" type="text" placeholder="Servicios, ventas, compras, arriendo..." />
+      </label>
+
+      <label class="field">
+        <span>Monto *</span>
+        <div class="currency-input">
+          <span>$</span>
+          <input formControlName="amount" type="number" min="0" step="100" placeholder="55000" />
+        </div>
+      </label>
+    </div>
+
+    <label class="field">
+      <span>Concepto *</span>
+      <input formControlName="concept" type="text" placeholder="Venta de producto, pago de proveedor, corte..." />
+    </label>
+
+    <label class="field">
+      <span>Notas</span>
+      <textarea
+        formControlName="notes"
+        rows="4"
+        placeholder="Detalle opcional para soporte interno o cierre de caja."
+      ></textarea>
+      <div class="field__meta">
+        <small>Opcional</small>
+        <small>{{ descriptionLength }}/280</small>
+      </div>
+    </label>
+
+    <div *ngIf="submitError" class="submit-feedback submit-feedback--error">
+      {{ submitError }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-button" [disabled]="cashForm.invalid || isLoading">
+        <span class="button-loader" *ngIf="isLoading"></span>
+        {{
+          isLoading
+            ? (isEditing ? 'Actualizando movimiento...' : 'Guardando movimiento...')
+            : (isEditing ? 'Actualizar movimiento' : 'Guardar movimiento')
+        }}
+      </button>
+
+      <button *ngIf="isEditing" type="button" class="secondary-button" (click)="cancelEdit()">
+        Cancelar edicion
+      </button>
+    </div>
+  </form>
+</section>

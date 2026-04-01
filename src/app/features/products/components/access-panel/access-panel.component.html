@@ -1,0 +1,26 @@
+<article class="access-panel">
+  <span class="access-panel__eyebrow">{{ eyebrowLabel }}</span>
+  <h2>{{ title }}</h2>
+  <p>{{ description }}</p>
+
+  <div class="access-panel__actions" *ngIf="isAuthReady">
+    <button
+      *ngIf="!currentUserEmail"
+      type="button"
+      class="access-panel__button access-panel__button--primary"
+      (click)="requestAccess()"
+      [disabled]="isSendingAccessLink"
+    >
+      {{ isSendingAccessLink ? 'Enviando acceso...' : 'Ingresar como administrador' }}
+    </button>
+
+    <button
+      *ngIf="currentUserEmail"
+      type="button"
+      class="access-panel__button access-panel__button--secondary"
+      (click)="signOut()"
+    >
+      Cerrar sesion
+    </button>
+  </div>
+</article>

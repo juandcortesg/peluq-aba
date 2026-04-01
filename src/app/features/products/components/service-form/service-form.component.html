@@ -1,0 +1,104 @@
+<section class="service-form-card">
+  <div class="service-form-card__heading">
+    <span class="eyebrow">{{ headingLabel }}</span>
+    <h2>{{ headingTitle }}</h2>
+    <p>{{ headingDescription }}</p>
+  </div>
+
+  <div class="service-preview-card">
+    <div class="service-preview-card__top">
+      <span class="service-pill">{{ controls['category'].value || 'Categoria' }}</span>
+      <span class="service-pill service-pill--accent">{{ previewBadge }}</span>
+    </div>
+
+    <h3>{{ controls['name'].value || 'Corte y cepillado' }}</h3>
+    <p>
+      {{
+        controls['description'].value ||
+          'Perfilado, acabado limpio y peinado final para una salida lista.'
+      }}
+    </p>
+
+    <div class="service-preview-card__footer">
+      <span>{{ formattedDuration }}</span>
+      <strong>
+        {{
+          controls['price'].value
+            ? (controls['price'].value | currency:'COP':'symbol-narrow':'1.0-0':'es-CO')
+            : '$ 0'
+        }}
+      </strong>
+    </div>
+  </div>
+
+  <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="field-grid">
+      <label class="field">
+        <span>Categoria *</span>
+        <input formControlName="category" type="text" placeholder="Cabello" />
+        <small *ngIf="hasControlError('category', 'required')" class="error-text">La categoria es obligatoria.</small>
+      </label>
+
+      <label class="field">
+        <span>Etiqueta</span>
+        <input formControlName="badge" type="text" placeholder="Alta demanda" />
+      </label>
+    </div>
+
+    <label class="field">
+      <span>Nombre del servicio *</span>
+      <input formControlName="name" type="text" placeholder="Corte y cepillado" />
+      <small *ngIf="hasControlError('name', 'required')" class="error-text">El nombre es obligatorio.</small>
+      <small *ngIf="hasControlError('name', 'minlength')" class="error-text">Usa al menos 3 caracteres.</small>
+    </label>
+
+    <div class="field-grid">
+      <label class="field">
+        <span>Duracion en minutos *</span>
+        <input formControlName="durationMinutes" type="number" min="10" max="600" step="5" placeholder="45" />
+        <small class="field__helper duration-helper">Equivale a {{ formattedDuration }}</small>
+      </label>
+
+      <label class="field">
+        <span>Precio *</span>
+        <div class="currency-input">
+          <span>$</span>
+          <input formControlName="price" type="number" min="0" step="100" placeholder="28000" />
+        </div>
+        <small class="field__helper">Tarifa base del servicio</small>
+      </label>
+    </div>
+
+    <label class="field">
+      <span>Descripcion</span>
+      <textarea
+        formControlName="description"
+        rows="4"
+        placeholder="Describe el beneficio del servicio o el resultado esperado."
+      ></textarea>
+      <div class="field__meta">
+        <small>Opcional</small>
+        <small>{{ descriptionLength }}/280</small>
+      </div>
+    </label>
+
+    <div *ngIf="submitError" class="submit-feedback submit-feedback--error">
+      {{ submitError }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-button" [disabled]="serviceForm.invalid || isLoading">
+        <span class="button-loader" *ngIf="isLoading"></span>
+        {{
+          isLoading
+            ? (isEditing ? 'Actualizando servicio...' : 'Guardando servicio...')
+            : (isEditing ? 'Actualizar servicio' : 'Guardar servicio')
+        }}
+      </button>
+
+      <button *ngIf="isEditing" type="button" class="secondary-button" (click)="cancelEdit()">
+        Cancelar edicion
+      </button>
+    </div>
+  </form>
+</section>
